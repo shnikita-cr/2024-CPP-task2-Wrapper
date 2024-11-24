@@ -1,35 +1,40 @@
 #pragma once
 
 #include <iostream>
-//#include "Engine/Engine.h"
-//#include "Wrapper/Wrapper.h"
+#include <functional>
+#include "Wrapper/Wrapper.h"
+#include "Engine/Engine.h"
+
+//https://stackoverflow.com/questions/16868129/how-to-store-variadic-template-arguments
 
 class Subject {
+    int i;
 public:
-    static void f3(int a, int b) {
-        std::cout << "Subject::f3(" << a << ", " << b << ")" << std::endl;
+    explicit Subject(int i) : i(i) {}
+
+    void printMe() const {
+        std::cout << "subject i=" << i << std::endl;
+    }
+
+    void f3(int a, int b) const {
+        std::cout << "Subject::f3(i:=" << i << ", a:=" << a << ", b:=" << b << ")" << std::endl;
     }
 };
 
-//void f(std::initializer_list<std::pair<std::string, int>> l) {}
-
-template<class T>
-void f(T &&a) {}
+void f(int i) {
+    log("f(i)", i);
+}
 
 void test() {
-//    Subject subj;
+    int i;
+    Wrapper wrapper(&i, &f, {"3", 3});
+
+//    Subject subj(3);
+//    Wrapper wrapper(&subj, &Subject::printMe);
 //
-//    Wrapper wrapper(&subj, &Subject::f3, {{"arg1", 0},
-//                                          {"arg2", 0}});
 //    Engine engine;
 //    engine.register_command(&wrapper, "command1");
 //    std::cout << engine.execute("command1", {{"arg1", 4},
 //                                             {"arg2", 5}});
 //    f(<brace-enclosed initializer list>)'
-//    28 |     f(
-    f(
-            {
-                    {"arg1", 0},
-                    {"arg2", 0}
-            });
 }

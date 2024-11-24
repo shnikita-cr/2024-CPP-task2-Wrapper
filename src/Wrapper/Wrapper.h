@@ -2,22 +2,23 @@
 
 #include <functional>
 #include <utility>
+#include "../tech.h"
 
-using params_t = std::vector<std::pair<std::string, int>>;
-
-template<class T, class R, class ...Args>
+template<class T, class F, class ...Args>
 class Wrapper {
 private:
-    T *obj;
-    std::function<R(Args...)> *func;
-    std::vector<std::pair<std::string, int>> params;
-public:
-    Wrapper(T *_obj,
-            std::function<R(Args...)> *_func,
-            params_t _params
-    ) : obj(_obj), func(_func), params(std::move(_params)) {}
+//    using ReturnType = std::invoke_result_t<F(Args...)>;
+    using ReturnType = typename std::invoke_result_t<F(Args...)>;
 
-    R operator()(const params_t &_params) {
-        return func(_params);
+    T obj;
+//    std::function<ReturnType(Args...)> bf;
+    std::function<ReturnType(Args...)> bcf;
+public:
+    Wrapper(T &&obj, F &&func, Args...args) : obj(obj) {
+//        (obj->*(func))(args...);
+//        bcf = std::bind(func, obj, args...);
+        auto ff = std::bind(func, obj, args...);
+        ff();
     }
+//    operator
 };
