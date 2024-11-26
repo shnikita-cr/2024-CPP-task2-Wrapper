@@ -2,5 +2,7 @@
 
 class ArgumentBase {
 public:
-    virtual void hello() = 0;
+    virtual ~ArgumentBase() = default;
+    virtual void print() const = 0;
+    virtual std::unique_ptr<ArgumentBase> clone() const = 0;
 };

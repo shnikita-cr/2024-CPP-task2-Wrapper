@@ -6,19 +6,16 @@
 
 template<class T>
 class Argument : public ArgumentBase {
-    T val;
 public:
-    explicit Argument(const T &init) : val(init) {}
+    T val;
 
-    void setValue(const T &_val) {
-        val = _val;
+    explicit Argument(T init) : val(std::move(init)) {}
+
+    [[nodiscard]] std::unique_ptr<ArgumentBase> clone() const override {
+        return std::make_unique<Argument<T>>(val);
     }
 
-    [[nodiscard]] T getValue() const {
-        return val;
-    }
-
-    void hello() override {
-        log("hello");
+    void print() const override {
+        log(val);
     }
 };

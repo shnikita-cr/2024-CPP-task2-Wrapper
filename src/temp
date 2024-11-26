@@ -5,7 +5,7 @@ private:
     T *obj;
 
     Ret (T::*method)(Args...);
-//    std::map<std::string, std::function<void()>> args; // Словарь с обработкой параметров
+//    std::map<std::string, std::function<void()>> arguments; // Словарь с обработкой параметров
 
     Ret call(Args... callArgs) {
         return (obj->*method)(callArgs...);
@@ -27,7 +27,7 @@ public:
     Wrapper(T *object, Ret (T::*func)(Args...), std::tuple<std::pair<std::string, Type>...> pairs)
             : Wrapper(object, func) {
 //        for (const auto &pair: argList) {
-//            args[pair.first] = [val = pair.second]() {
+//            arguments[pair.first] = [val = pair.second]() {
 //                // Храним значение для отложенного использования
 //                std::cout << "Stored argument: " << val << std::endl;
 //            };
