@@ -1,0 +1,40 @@
+// Класс-обёртка
+template<typename T, typename Ret, typename... Args>
+class Wrapper {
+private:
+    T *obj;
+
+    Ret (T::*method)(Args...);
+//    std::map<std::string, std::function<void()>> args; // Словарь с обработкой параметров
+
+    Ret call(Args... callArgs) {
+        return (obj->*method)(callArgs...);
+    }
+
+public:
+    Wrapper(T *object, Ret (T::*func)(Args...)) : obj(object), method(func) {}
+
+//    template<class Arg>
+//    class Argument {
+//        std::string s;
+//        Arg arg;
+//    public:
+//        Argument(std::initializer_list) : arg(std::move(arg)), s(std::move(s)) {}
+//    };
+
+    // Конструктор
+    template<typename ...Type>
+    Wrapper(T *object, Ret (T::*func)(Args...), std::tuple<std::pair<std::string, Type>...> pairs)
+            : Wrapper(object, func) {
+//        for (const auto &pair: argList) {
+//            args[pair.first] = [val = pair.second]() {
+//                // Храним значение для отложенного использования
+//                std::cout << "Stored argument: " << val << std::endl;
+//            };
+//        }
+    }
+
+    Ret operator()(Args... callArgs) {
+        return (obj->*method)(callArgs...);
+    }
+};
