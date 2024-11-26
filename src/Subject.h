@@ -11,7 +11,8 @@ public:
         std::cout << "subject i=" << i << std::endl;
     }
 
-    void f3(int a, int b)  {
+    int f3(int a, int b)  {
         std::cout << "Subject::f3(i:=" << i << ", a:=" << a << ", b:=" << b << ")" << std::endl;
+        return 53;
     }
 };

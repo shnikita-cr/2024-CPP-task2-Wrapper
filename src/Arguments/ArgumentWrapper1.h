@@ -5,13 +5,13 @@
 #include "ArgumentBase.h"
 #include "Argument.h"
 
-class ArgumentWrapper {
+class ArgumentWrapper1 {
 private:
     std::string name;
     ArgumentBase *arg;
 public:
     template<class T>
-    ArgumentWrapper(std::string s, T t) :
+    ArgumentWrapper1(std::string s, T t) :
             name(std::move(s)) {
         arg = new Argument<T>(t);
         dynamic_cast<Argument<T> *>(arg)->setValue(t);
@@ -26,7 +26,7 @@ public:
         return name;
     }
 
-    friend std::ostream &operator<<(std::ostream &os, const ArgumentWrapper &wrapper) {
+    friend std::ostream &operator<<(std::ostream &os, const ArgumentWrapper1 &wrapper) {
         os << wrapper.arg;
         return os;
     }

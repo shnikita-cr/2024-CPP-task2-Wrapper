@@ -4,15 +4,16 @@
 #include <string>
 #include <map>
 #include "../tech.h"
-#include "ArgumentWrapper.h"
+#include "ArgumentWrapper1.h"
+#include "ArgumentWrapper2.h"
 
 class ArgumentManager {
 private:
-    std::map<std::string, ArgumentWrapper> args;
-    typedef std::map<std::string, ArgumentWrapper>::iterator ArgsIterator;
-    typedef std::pair<std::string, ArgumentWrapper> argPair;
+    std::map<std::string, ArgumentWrapper1> args;
+    typedef std::map<std::string, ArgumentWrapper1>::iterator ArgsIterator;
+    typedef std::pair<std::string, ArgumentWrapper1> argPair;
 public:
-    ArgumentManager(std::initializer_list<ArgumentWrapper> list) {
+    ArgumentManager(std::initializer_list<ArgumentWrapper1> list) {
         for (const auto &i: list) {
             argPair p(i.getName(), i);
             args.insert(p);
@@ -23,5 +24,13 @@ public:
         for (const auto &l: args) {
             log("ArgumentManager print: argument name ==", l.first, " argument value == ", l.second);
         }
+    }
+
+    template<typename... Args>
+    std::tuple<Args...> getValues() {
+        args.
+
+
+        return std::tuple<Args...>();
     }
 };

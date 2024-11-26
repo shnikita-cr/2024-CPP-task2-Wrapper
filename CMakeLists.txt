@@ -13,6 +13,6 @@ add_executable(2024_CPP_task2_Wrapper
         src/Subject.h
         src/Arguments/Argument.h
         src/Arguments/ArgumentBase.h
-        src/Arguments/ArgumentWrapper.h
+#        src/Arguments/ArgumentWrapper2.h
         src/Arguments/ArgumentManager.h
-        )
+        src/Arguments/ArgumentWrapper2.h src/Arguments/ArgumentWrapper1.h)
