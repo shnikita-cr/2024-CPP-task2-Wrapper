@@ -6,13 +6,16 @@
 
 template<class T>
 class Argument : public ArgumentBase {
-public:
     T val;
-
+public:
     explicit Argument(T init) : val(std::move(init)) {}
 
     [[nodiscard]] std::unique_ptr<ArgumentBase> clone() const override {
         return std::make_unique<Argument<T>>(val);
+    }
+
+    T getVal() const {
+        return val;
     }
 
     void print() const override {

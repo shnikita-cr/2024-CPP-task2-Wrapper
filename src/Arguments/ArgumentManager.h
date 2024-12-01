@@ -18,17 +18,17 @@ private:
     }
 
     template<class T>
-    T getValue(const std::string &key) const {
-        auto it = arguments.find(key);
+    T getValue(const std::string &argumentName) const {
+        auto it = arguments.find(argumentName);
         if (it == arguments.end()) {
-            throw std::runtime_error("Key not found: " + key);
+            throw std::runtime_error("ArgumentName not found: " + argumentName);
         }
 
         auto *arg = dynamic_cast<Argument<T> *>(it->second.get());
         if (!arg) {
-            throw std::runtime_error("Type mismatch for key: " + key);
+            throw std::runtime_error("Type mismatch for ArgumentName: " + argumentName);
         }
-        return arg->val;
+        return arg->getVal();
     }
 
     template<class... Args, std::size_t... I>
@@ -50,12 +50,17 @@ public:
         return getTupleHelper<Args...>(keys, std::index_sequence_for<Args...>{});
     }
 
-    std::vector<std::string> getNames() {
+    [[nodiscard]] std::vector<std::string> getNames() const {
         std::vector<std::string> names;
         for (auto &&a: arguments) {
             names.push_back(a.first);
         }
         return names;
+    }
+
+    template<class ...Args>
+    auto getArgumentValues() const {
+        return getTuple<Args...>(getNames());
     }
 };
 

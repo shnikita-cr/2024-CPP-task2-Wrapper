@@ -1,11 +1,11 @@
 #pragma once
 
-#include <utility>
 
 #include "../Arguments/ArgumentManager.h"
+#include "../Engine/CommandBase.h"
 
 template<typename T, typename Ret, typename... Args>
-class Wrapper {
+class Wrapper : public CommandBase {
 private:
     T *obj;
 
@@ -13,21 +13,32 @@ private:
 
     Ret (T::*method)(Args...);
 
-public:
-    Wrapper(T *object, Ret (T::*func)(Args...), ArgumentManager manager = {}) :
-            obj(object), method(func), manager(std::move(manager)) {}
-
-    auto getValues(const std::vector<std::string> &paramNames) {
-        return manager.getTuple<Args...>(paramNames);
-    }
-
-    Ret operator()() {
-        auto params = getValues({"asd1", "asd2"});
+    Ret call(std::tuple<Args...> &params) const {
         return std::apply(
                 [this](auto &&... args) {
                     return (obj->*method)(std::forward<Args>(args)...);
                 },
                 params
         );
+    }
+
+public:
+
+    Wrapper(T *object, Ret (T::*func)(Args...), ArgumentManager manager = {}) :
+            obj(object), method(func), manager(std::move(manager)) {}
+
+    Ret operator()() {
+        auto params = manager.getArgumentValues<Args...>();
+        return call(params);
+    }
+
+    Ret operator()(const ArgumentManager &tManager) {
+        auto params = tManager.getArgumentValues<Args...>();
+        return call(params);
+    }
+
+    void execute(const ArgumentManager &tManager) override {
+        auto params = tManager.getArgumentValues<Args...>();
+        call(params);
     }
 };

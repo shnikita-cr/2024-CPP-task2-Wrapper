@@ -1,6 +1,6 @@
 #include "test.h"
 
 int main() {
-    test();
+    unitTest1();
     return 0;
 }
