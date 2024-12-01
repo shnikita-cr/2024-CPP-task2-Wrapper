@@ -13,33 +13,21 @@ private:
 
     Ret (T::*method)(Args...);
 
-    Ret call(Args... callArgs) { return (obj->*method)(callArgs...); }
-
-
-    template<typename... Keys>
-    auto getValues(Keys &&... keys) { return manager.mapToTuple(keys...); }
-
 public:
-
-    Wrapper(T *object, Ret (T::*func)(Args...), ArgumentManager manager) :
+    Wrapper(T *object, Ret (T::*func)(Args...), ArgumentManager manager = {}) :
             obj(object), method(func), manager(std::move(manager)) {}
 
-    Wrapper(T *object, Ret (T::*func)(Args...)) : obj(object), method(func) {}
-
-    Ret operator()(std::tuple<Args...> params) {
-        auto lambda = [&](auto &&...args) {
-            call(args...);
-        };
-        std::apply(lambda, params);
+    auto getValues(const std::vector<std::string> &paramNames) {
+        return manager.getTuple<Args...>(paramNames);
     }
 
     Ret operator()() {
-//        std::tuple<Args...> params{3, 4};
-        auto params = getValues("asd1", "asd2");
-
-        auto lambda = [&](auto &&...args) {
-            call(args...);
-        };
-        std::apply(lambda, params);
+        auto params = getValues({"asd1", "asd2"});
+        return std::apply(
+                [this](auto &&... args) {
+                    return (obj->*method)(std::forward<Args>(args)...);
+                },
+                params
+        );
     }
 };

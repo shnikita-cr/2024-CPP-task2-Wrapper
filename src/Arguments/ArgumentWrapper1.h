@@ -15,7 +15,6 @@ public:
     ArgumentWrapper1(std::string s, T t) :
             name(std::move(s)), arg(std::make_unique<Argument<T>>(std::move(t))) {}
 
-    // Добавление конструктора копирования
     ArgumentWrapper1(const ArgumentWrapper1 &other)
             : name(other.name), arg(other.arg ? other.arg->clone() : nullptr) {}
 

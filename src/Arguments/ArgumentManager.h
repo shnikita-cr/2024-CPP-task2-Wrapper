@@ -3,46 +3,54 @@
 #include <initializer_list>
 #include <string>
 #include <map>
+#include <vector>
 #include "../tech.h"
 #include "ArgumentWrapper1.h"
-#include "ArgumentWrapper2.h"
 
 class ArgumentManager {
 private:
     using ArgMap = std::map<std::string, std::unique_ptr<ArgumentBase>>;
     ArgMap arguments;
-public:
-    ArgumentManager(std::initializer_list<ArgumentWrapper1> args) {
-        for (auto &arg: args) {
-            addArgument(arg.name, arg);
-        }
-    }
 
-    template<typename T>
+    template<class T>
     void addArgument(const std::string &name, T value) {
         arguments[name] = std::make_unique<Argument<T>>(std::move(value));
     }
 
-    template<typename T>
-    T getValue(const std::string &name) const {
-        auto it = arguments.find(name);
+    template<class T>
+    T getValue(const std::string &key) const {
+        auto it = arguments.find(key);
         if (it == arguments.end()) {
-            throw std::runtime_error("Argument not found: " + name);
+            throw std::runtime_error("Key not found: " + key);
         }
-        auto ptr = dynamic_cast<Argument<T> *>(it->second.get());
-        if (!ptr) {
-            throw std::bad_cast();
+
+        auto *arg = dynamic_cast<Argument<T> *>(it->second.get());
+        if (!arg) {
+            throw std::runtime_error("Type mismatch for key: " + key);
         }
-        return ptr->value;
+        return arg->val;
     }
 
-    template<typename... Keys>
-    auto mapToTuple(Keys &&... keys) { //fixme error
-        return std::make_tuple(arguments.at(keys).template get<std::decay_t<decltype(arguments.at(
-                keys).template get<typename std::remove_reference<Keys>::type>())>>()...);
+    template<class... Args, std::size_t... I>
+    std::tuple<Args...> getTupleHelper(const std::vector<std::string> &keys, std::index_sequence<I...>) const {
+        return std::make_tuple(getValue<Args>(keys[I])...);
     }
 
-    // Метод для отладки: отображение всех аргументов
+public:
+
+    ArgumentManager(std::initializer_list<ArgumentWrapper1> args) {
+        for (const auto &arg: args) {
+            arguments[arg.name] = arg.arg->clone();
+        }
+    }
+
+    template<class... Args>
+    std::tuple<Args...> getTuple(const std::vector<std::string> &keys) const {
+        std::tuple<Args...> t;
+        return getTupleHelper<Args...>(keys, std::index_sequence_for<Args...>{});
+    }
+
+
     void printArguments() const {
         for (const auto &[name, arg]: arguments) {
             std::cout << name << ": ";
@@ -51,14 +59,14 @@ public:
         }
     }
 
-//    template<typename... Args>
-//    std::tuple<Args...> getValues() {
-//        auto f = [&]() {
-//            for (auto &arg: arguments) {
-//                arg.second.get<>()
-//            }
-//        };
-//
-//        return std::tuple<Args...>();
-//    }
+    std::vector<std::string> getNames() {
+        std::vector<std::string> names;
+        for (auto &&a: arguments) {
+            names.push_back(a.first);
+        }
+        return names;
+    }
 };
+
+
+

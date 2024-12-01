@@ -16,6 +16,6 @@ public:
     }
 
     void print() const override {
-        log(val);
+        std::cout << val << std::endl;
     }
 };

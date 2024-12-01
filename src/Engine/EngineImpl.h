@@ -3,7 +3,7 @@
 #include "Engine.h"
 
 
-class EngineImpl: public Engine{
+class EngineImpl : public Engine {
 private:
 
 public:

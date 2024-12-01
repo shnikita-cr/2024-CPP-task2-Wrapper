@@ -13,3 +13,23 @@ void log(const Arg &a, const Args &...args) {
     log(args...);
     std::cout << std::endl;
 }
+
+template<class T>
+void printT(T &&t) {
+    std::cout << typeid(t).name() << std::endl;
+}
+
+template<typename TupleT, typename Fn>
+void for_each_tuple2(TupleT &&tp, Fn &&fn) {
+    std::apply
+            (
+                    [&fn](auto &&...args) {
+                        (fn(std::forward<decltype(args)>(args)), ...);
+                    }, std::forward<TupleT>(tp)
+            );
+}
+
+//template<class ...Args>
+//void printTypes(const std::tuple<Args...>& t) {
+//
+//}

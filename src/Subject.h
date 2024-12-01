@@ -5,14 +5,10 @@
 class Subject {
     int i;
 public:
-    Subject(int i) : i(i) {}
+    explicit Subject(int i) : i(i) {}
 
-    void printMe()  {
-        std::cout << "subject i=" << i << std::endl;
-    }
-
-    int f3(int a, int b)  {
+    int f3(int a, std::string b) {
         std::cout << "Subject::f3(i:=" << i << ", a:=" << a << ", b:=" << b << ")" << std::endl;
-        return 53;
+        return 5;
     }
 };
