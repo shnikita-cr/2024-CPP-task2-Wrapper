@@ -20,10 +20,6 @@ public:
 
     ArgumentWrapper1(ArgumentWrapper1 &&other) noexcept = default;
 
-    void print() const {
-        arg->print();
-    }
-
     friend std::ostream &operator<<(std::ostream &os, const ArgumentWrapper1 &wrapper) {
         os << wrapper.arg.get();
         return os;

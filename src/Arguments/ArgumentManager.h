@@ -50,15 +50,6 @@ public:
         return getTupleHelper<Args...>(keys, std::index_sequence_for<Args...>{});
     }
 
-
-    void printArguments() const {
-        for (const auto &[name, arg]: arguments) {
-            std::cout << name << ": ";
-            log(arg.get());
-            std::cout << "\n";
-        }
-    }
-
     std::vector<std::string> getNames() {
         std::vector<std::string> names;
         for (auto &&a: arguments) {
