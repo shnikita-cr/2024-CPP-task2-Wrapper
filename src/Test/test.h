@@ -25,6 +25,7 @@ void unitTest1() {
 void test2() {
     Document document;
     document.readFile("../src/Test/text.txt");
-    std::cout << document << std::endl;
-//    document.replaceWords()
+    std::cout << "before: " << document << std::endl;
+    document.makeUpperFirstInSentence();
+    std::cout << "after: " << document << std::endl;
 }
