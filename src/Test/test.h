@@ -1,8 +1,10 @@
 #pragma once
 
+#include <fstream>
 #include "Subject.h"
-#include "Wrapper/Wrapper.h"
-#include "Engine/Engine.h"
+#include "../Wrapper/Wrapper.h"
+#include "../Engine/Engine.h"
+#include "Document.h"
 
 void unitTest1() {
     Subject subj(3);
@@ -17,4 +19,12 @@ void unitTest1() {
     engine.registerCommand(&wrapper2, "command1");
     engine.execute("command1", {{"asd1", 4},
                                 {"asd2", std::string("das")}});
+}
+
+
+void test2() {
+    Document document;
+    document.readFile("../src/Test/text.txt");
+    std::cout << document << std::endl;
+//    document.replaceWords()
 }
