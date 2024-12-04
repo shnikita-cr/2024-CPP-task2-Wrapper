@@ -9,12 +9,19 @@
 class Document {
 private:
     std::string text;
+    std::string spaces;
 public:
     Document() {
         text = "";
     }
 
-    explicit Document(std::string text) : text(std::move(text)) {}
+    explicit Document(std::string text) : text(std::move(text)) {
+        spaces = " ";
+    }
+
+    void setSpaces(const std::string &_spaces) {
+        spaces = _spaces;
+    }
 
     void readFile(const std::string &fileName) {
         std::ifstream f(fileName);
@@ -53,18 +60,58 @@ public:
     }
 
     void makeUpperFirstInSentence() {
-//        std::string sentence;
-//        size_t start_pos = 0, pos = 0;
-//
-//        while ((pos = text.find('.', start_pos)) != std::string::npos) {
-//            sentence = text.substr(start_pos, text.find('.', start_pos) + 1);
-//            ltrim(sentence);
+        size_t start_pos = 0, dot_pos = 0;
+        while ((dot_pos = text.find('.', start_pos)) != std::string::npos) {
+            start_pos = makeUpperFirstInSentenceHelper(start_pos, dot_pos);
+        }
+        if (start_pos != text.length())
+            makeUpperFirstInSentenceHelper(start_pos, text.length());
+    }
+
+    void numerateFormatSentences() {
+//        size_t start_pos = 0, dot_pos = 0;
+//        size_t counter = 1;
+//        while ((dot_pos = text.find('.', start_pos)) != std::string::npos) {
+//            std::string sentence;
+//            sentence = text.substr(start_pos, dot_pos + 1);
 //            std::cout << "sentence: '" << sentence << "' end" << '\n';
-//            start_pos = text.find('.', start_pos) + 1;
+////            for (size_t i = start_pos; i <= dot_pos; i++) {
+////                if (!isalpha(text[i])) {
+////                    std::cout << "passing" << std::endl;
+////                    continue;
+//                }
+//
+//                break;
+//            };
+//            start_pos = dot_pos + 1;
 //        }
+//        if (start_pos != text.length())
+//            makeUpperFirstInSentenceHelper(start_pos, text.length());
     }
 
 private:
+    size_t makeUpperFirstInSentenceHelper(size_t start_pos, size_t dot_pos) {
+        std::string sentence;
+        sentence = text.substr(start_pos, dot_pos + 1);
+        std::cout << "sentence: '" << sentence << "' end" << '\n';
+        for (size_t i = start_pos; i <= dot_pos; i++) {
+            if (!isalpha(text[i])) {
+                std::cout << "passing" << std::endl;
+                continue;
+            }
+            text[i] = _toupper(text[i]);
+            break;
+        };
+        return start_pos = dot_pos + 1;
+    }
+
+
+//    bool isSpace(char ch) {
+//        return (std::any_of(spaces.begin(), spaces.end(), [ch](const char &x) {
+//            return x == ch;
+//        }));
+//    }
+
     inline void ltrim(std::string &s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
             return !std::isspace(ch);
