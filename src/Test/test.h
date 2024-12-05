@@ -27,5 +27,5 @@ void test2() {
     document.readFile("../src/Test/text.txt");
     std::cout << "before: " << document << std::endl;
     document.makeUpperFirstInSentence();
-    std::cout << "after: " << document << std::endl;
+    std::cout << "after:" << document << std::endl;
 }

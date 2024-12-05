@@ -9,30 +9,29 @@
 class Document {
 private:
     std::string text;
-    std::string spaces;
 public:
     Document() {
         text = "";
     }
 
-    explicit Document(std::string text) : text(std::move(text)) {
-        spaces = " ";
-    }
+    explicit Document(std::string text) : text(std::move(text)) {}
 
-    void setSpaces(const std::string &_spaces) {
-        spaces = _spaces;
-    }
 
     void readFile(const std::string &fileName) {
-        std::ifstream f(fileName);
-        std::stringstream ss;
-        ss << f.rdbuf();
-        text = ss.str();
+        std::ifstream f(fileName); //todo remove function
+        f >> (*this);
         f.close();
     }
 
+    friend std::istream &operator>>(std::istream &is, Document &document) {
+        std::stringstream ss;
+        ss << is.rdbuf();
+        document.text = ss.str();
+        return is;
+    }
+
     friend std::ostream &operator<<(std::ostream &os, const Document &document) {
-        os << "text:\n" << '"' << document.text << '"';
+        os << "text:\n" << "'\n" << document.text << "\n'";
         return os;
     }
 
@@ -43,13 +42,13 @@ public:
         while ((start_pos = text.find(from, start_pos)) != std::string::npos) {
             text.replace(start_pos, from.length(), to);
             start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
-            //TODO to.length()+1 if dont want upper case
+            //TODO to.length()+1 if dont want case in comment
         }
     }
 
-    int findPhrase(const std::string &phrase) {
-
-    }
+//    int findPhrase(const std::string &phrase) {
+//
+//    }
 
     void makeUpperWords() {
         for (size_t i = 0; i < text.size(); i++) {
@@ -60,57 +59,40 @@ public:
     }
 
     void makeUpperFirstInSentence() {
-        size_t start_pos = 0, dot_pos = 0;
-        while ((dot_pos = text.find('.', start_pos)) != std::string::npos) {
-            start_pos = makeUpperFirstInSentenceHelper(start_pos, dot_pos);
+        auto sentences = splitText(text, ".");
+        std::ostringstream modifiedText;
+        for (auto &sentence: sentences) {
+            sentence[0] = _toupper(sentence[0]);
+            modifiedText << sentence;
         }
-        if (start_pos != text.length())
-            makeUpperFirstInSentenceHelper(start_pos, text.length());
+        text = modifiedText.str();
     }
 
-    void numerateFormatSentences() {
-//        size_t start_pos = 0, dot_pos = 0;
-//        size_t counter = 1;
-//        while ((dot_pos = text.find('.', start_pos)) != std::string::npos) {
-//            std::string sentence;
-//            sentence = text.substr(start_pos, dot_pos + 1);
-//            std::cout << "sentence: '" << sentence << "' end" << '\n';
-////            for (size_t i = start_pos; i <= dot_pos; i++) {
-////                if (!isalpha(text[i])) {
-////                    std::cout << "passing" << std::endl;
-////                    continue;
-//                }
-//
-//                break;
-//            };
-//            start_pos = dot_pos + 1;
-//        }
-//        if (start_pos != text.length())
-//            makeUpperFirstInSentenceHelper(start_pos, text.length());
+    void addNumberingNewLinesToSentences() {
+        auto sentences = splitText(text, ".");
+        std::ostringstream numberedText;
+        for (size_t i = 0; i < sentences.size(); ++i) {
+            numberedText << (i + 1) << ". " << sentences[i] << "\n";
+        }
+        text = numberedText.str();
     }
 
 private:
-    size_t makeUpperFirstInSentenceHelper(size_t start_pos, size_t dot_pos) {
+    [[nodiscard]] static std::vector<std::string> splitText(const std::string &txt, const std::string &delims) {
+        std::vector<std::string> sentences;
         std::string sentence;
-        sentence = text.substr(start_pos, dot_pos + 1);
-        std::cout << "sentence: '" << sentence << "' end" << '\n';
-        for (size_t i = start_pos; i <= dot_pos; i++) {
-            if (!isalpha(text[i])) {
-                std::cout << "passing" << std::endl;
-                continue;
+        for (char c: txt) {
+            sentence += c;
+            if (delims.find_first_not_of(c)) {
+                sentences.push_back(sentence);
+                sentence.clear();
             }
-            text[i] = _toupper(text[i]);
-            break;
-        };
-        return start_pos = dot_pos + 1;
+        }
+        if (!sentence.empty()) {
+            sentences.push_back(sentence);
+        }
+        return sentences;
     }
-
-
-//    bool isSpace(char ch) {
-//        return (std::any_of(spaces.begin(), spaces.end(), [ch](const char &x) {
-//            return x == ch;
-//        }));
-//    }
 
     inline void ltrim(std::string &s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
