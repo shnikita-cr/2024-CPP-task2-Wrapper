@@ -4,6 +4,7 @@
 #include <sstream>
 #include <ostream>
 #include <fstream>
+#include <optional>
 #include "../tech.h"
 
 class Document {
@@ -15,7 +16,6 @@ public:
     }
 
     explicit Document(std::string text) : text(std::move(text)) {}
-
 
     void readFile(const std::string &fileName) {
         std::ifstream f(fileName); //todo remove function
@@ -46,11 +46,17 @@ public:
         }
     }
 
-//    int findPhrase(const std::string &phrase) {
-//
-//    }
+    std::optional<size_t> findPhrase(const std::string &word1, const std::string &word2) {
+        auto words = splitText(text, " ");
+        for (size_t i = 0; i < words.size() - 1; i++) {
+            if (words[i] == word1 && words[i + 1] == word2) {
+                return {i};
+            }
+        }
+        return std::nullopt;
+    }
 
-    void makeUpperWords() {
+    void makeUpperFirstInWords() {
         for (size_t i = 0; i < text.size(); i++) {
             if (isalpha(text[i]) && (i > 0 ? !isalpha(text[i - 1]) : 1)) {
                 text[i] = _toupper(text[i]);
