@@ -13,8 +13,8 @@ private:
     ArgMap arguments;
 
     template<class T>
-    void addArgument(const std::string &name, T value) {
-        arguments[name] = std::make_unique<Argument<T>>(std::move(value));
+    void addArgument(const std::string &name, T &&value) {
+        arguments[name] = std::make_unique<Argument<T>>(std::forward<T>(value));
     }
 
     template<class T>

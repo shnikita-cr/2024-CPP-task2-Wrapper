@@ -25,7 +25,7 @@ private:
 public:
 
     Wrapper(T *object, Ret (T::*func)(Args...), ArgumentManager manager = {}) :
-            obj(object), method(func), manager(std::move(manager)) {}
+            obj(object), method(func), manager(std::forward<ArgumentManager>(manager)) {}
 
     Ret operator()() {
         auto params = manager.getArgumentValues<Args...>();
@@ -41,4 +41,5 @@ public:
         auto params = tManager.getArgumentValues<Args...>();
         call(params);
     }
+
 };
