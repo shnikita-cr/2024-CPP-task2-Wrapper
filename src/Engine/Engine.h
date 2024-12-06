@@ -22,4 +22,13 @@ public:
         }
         it->second->execute(manager);
     }
+
+    void execute(const std::string &name) {
+        ArgumentManager manager{};
+        auto it = commands.find(name);
+        if (it == commands.end()) {
+            throw std::runtime_error("CommandName not found: " + name);
+        }
+        it->second->execute(manager);
+    }
 };
