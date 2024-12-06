@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 #include "../tech.h"
-#include "ArgumentWrapper1.h"
+#include "ArgumentWrapper.h"
 
 class ArgumentManager {
 private:
@@ -38,7 +38,7 @@ private:
 
 public:
 
-    ArgumentManager(std::initializer_list<ArgumentWrapper1> args) {
+    ArgumentManager(std::initializer_list<ArgumentWrapper> args) {
         for (const auto &arg: args) {
             arguments[arg.name] = arg.arg->clone();
         }

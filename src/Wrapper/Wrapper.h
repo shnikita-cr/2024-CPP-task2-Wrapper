@@ -23,7 +23,6 @@ private:
     }
 
 public:
-
     Wrapper(T *object, Ret (T::*func)(Args...), ArgumentManager manager = {}) :
             obj(object), method(func), manager(std::forward<ArgumentManager>(manager)) {}
 
@@ -41,5 +40,4 @@ public:
         auto params = tManager.getArgumentValues<Args...>();
         call(params);
     }
-
 };

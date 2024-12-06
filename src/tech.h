@@ -28,8 +28,3 @@ void for_each_tuple2(TupleT &&tp, Fn &&fn) {
                     }, std::forward<TupleT>(tp)
             );
 }
-
-//template<class ...Args>
-//void printTypes(const std::tuple<Args...>& t) {
-//
-//}
