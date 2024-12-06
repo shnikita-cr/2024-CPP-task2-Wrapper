@@ -18,7 +18,7 @@ public:
     explicit Document(std::string text) : text(std::move(text)) {}
 
     void readFile(const std::string &fileName) {
-        std::ifstream f(fileName); //todo remove function
+        std::ifstream f(fileName);
         f >> (*this);
         f.close();
     }
@@ -35,7 +35,7 @@ public:
         return os;
     }
 
-    void replaceWords(const std::string &from, const std::string &to) {
+    void replaceWords(const std::string from, const std::string to) {
         if (from.empty())
             return;
         size_t start_pos = 0;
@@ -46,11 +46,11 @@ public:
         }
     }
 
-    std::optional<size_t> findPhrase(const std::string &word1, const std::string &word2) {
-        auto words = splitText(text, " ");
+    std::optional<size_t> findPhrase(const std::string word1, const std::string word2, const std::string delims) {
+        auto words = splitCleanText(text, delims);
         for (size_t i = 0; i < words.size() - 1; i++) {
             if (words[i] == word1 && words[i + 1] == word2) {
-                return {i};
+                return {i}; // возвращает индекс СЛОВА из списка слов; СЛОВО - первое слово словосочетания
             }
         }
         return std::nullopt;
@@ -83,15 +83,22 @@ public:
         text = numberedText.str();
     }
 
+    void printText() {
+        std::cout << (*this);
+    }
+
 private:
-    [[nodiscard]] static std::vector<std::string> splitText(const std::string &txt, const std::string &delims) {
+    [[nodiscard]] static std::vector<std::string>
+    splitText(const std::string &txt, const std::string &delimiters) {
         std::vector<std::string> sentences;
         std::string sentence;
         for (char c: txt) {
             sentence += c;
-            if (delims.find_first_not_of(c)) {
-                sentences.push_back(sentence);
-                sentence.clear();
+            if (delimiters.find_first_not_of(c)) {
+                if (!sentence.empty()) {
+                    sentences.push_back(sentence);
+                    sentence.clear();
+                }
             }
         }
         if (!sentence.empty()) {
@@ -100,15 +107,23 @@ private:
         return sentences;
     }
 
-    inline void ltrim(std::string &s) {
-        s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
-            return !std::isspace(ch);
-        }));
-    }
-
-    inline void rtrim(std::string &s) {
-        s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
-            return !std::isspace(ch);
-        }).base(), s.end());
+    [[nodiscard]] static std::vector<std::string>
+    splitCleanText(const std::string &txt, const std::string &delimiters) {
+        std::vector<std::string> sentences;
+        std::string sentence;
+        for (char c: txt) {
+            sentence += c;
+            if (delimiters.find(c) != std::string::npos) {
+                sentence = sentence.substr(0, sentence.length() - 1);
+                if (!sentence.empty()) {
+                    sentences.push_back(sentence);
+                    sentence.clear();
+                }
+            }
+        }
+        if (!sentence.empty()) {
+            sentences.push_back(sentence);
+        }
+        return sentences;
     }
 };
